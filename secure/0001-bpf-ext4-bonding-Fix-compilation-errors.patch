@@ -1,0 +1,44 @@
+From 4eb745c8cb5c82a2e01e407648c708de5c5a7d3e Mon Sep 17 00:00:00 2001
+From: "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
+Date: Tue, 2 Oct 2018 17:17:36 -0700
+Subject: [PATCH] bpf, ext4, bonding: Fix compilation errors
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+In file included from kernel/bpf/core.c:24:0:
+kernel/bpf/core.c: In function ‘___bpf_prog_run’:
+./include/linux/filter.h:750:50: error: cast from function type ‘u64 (*)(u64,  u64,  u64,  u64,  u64) {aka long long unsigned int (*)(long long unsigned int,  long long unsigned int,  long long unsigned int,  long long unsigned int,  long long unsigned int)}’ to non-matching type ‘u64 (*)(u64,  u64,  u64,  u64,  u64,  const struct bpf_insn *) {aka long long unsigned int (*)(long long unsigned int,  long long unsigned int,  long long unsigned int,  long long unsigned int,  long long unsigned int,  const struct bpf_insn *)}’
+  ((u64 (*)(u64, u64, u64, u64, u64, const struct bpf_insn *)) \
+                                                  ^
+kernel/bpf/core.c:1132:13: note: in expansion of macro ‘__bpf_call_base_args’
+   BPF_R0 = (__bpf_call_base_args + insn->imm)(BPF_R1, BPF_R2,
+             ^~~~~~~~~~~~~~~~~~~~
+kernel/bpf/core.c: In function ‘bpf_patch_call_args’:
+./include/linux/filter.h:750:50: error: cast from function type ‘u64 (*)(u64,  u64,  u64,  u64,  u64) {aka long long unsigned int (*)(long long unsigned int,  long long unsigned int,  long long unsigned int,  long long unsigned int,  long long unsigned int)}’ to non-matching type ‘u64 (*)(u64,  u64,  u64,  u64,  u64,  const struct bpf_insn *) {aka long long unsigned int (*)(long long unsigned int,  long long unsigned int,  long long unsigned int,  long long unsigned int,  long long unsigned int,  const struct bpf_insn *)}’
+  ((u64 (*)(u64, u64, u64, u64, u64, const struct bpf_insn *)) \
+                                                  ^
+kernel/bpf/core.c:1410:3: note: in expansion of macro ‘__bpf_call_base_args’
+   __bpf_call_base_args;
+   ^~~~~~~~~~~~~~~~~~~~
+
+Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
+Signed-off-by: Keerthana K <keerthanak@vmware.com>
+Signed-off-by: Roye Eshed <eshedr@vmware.com>
+Signed-off-by: Ashwin Dayanand Kamat <kashwindayan@vmware.com>
+---
+ drivers/gpu/drm/nouveau/Kbuild          | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/gpu/drm/nouveau/Kbuild b/drivers/gpu/drm/nouveau/Kbuild
+index 60586fb82..1dd1be224 100644
+--- a/drivers/gpu/drm/nouveau/Kbuild
++++ b/drivers/gpu/drm/nouveau/Kbuild
+@@ -74,3 +74,5 @@ nouveau-y += nv84_fence.o
+ nouveau-y += nvc0_fence.o
+ 
+ obj-$(CONFIG_DRM_NOUVEAU) += nouveau.o
++
++OBJECT_FILES_NON_STANDARD := y
+-- 
+2.17.1

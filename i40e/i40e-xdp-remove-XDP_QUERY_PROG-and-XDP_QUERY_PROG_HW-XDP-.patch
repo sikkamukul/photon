@@ -1,0 +1,35 @@
+From f89fb8f6a4fd0c986008a6397aa2d23ccba7ba65 Mon Sep 17 00:00:00 2001
+From: Bo Gan <ganb@vmware.com>
+Date: Mon, 14 Sep 2020 16:18:04 -0700
+Subject: [PATCH] xdp: remove XDP_QUERY_PROG and XDP_QUERY_PROG_HW XDP commands
+
+Original patch from Andrii Nakryiko: lwn.net/Articles/825998
+
+Signed-off-by: Bo Gan <ganb@vmware.com>
+Signed-off-by: Keerthana K <keerthanak@vmware.com>
+---
+ src/i40e_main.c | 8 --------
+ 1 file changed, 8 deletions(-)
+
+diff --git a/src/i40e_main.c b/src/i40e_main.c
+index cd83ec2..caf2251 100644
+--- a/src/i40e_main.c
++++ b/src/i40e_main.c
+@@ -14647,14 +14647,6 @@ static int i40e_xdp(struct net_device *dev,
+ 	switch (xdp->command) {
+ 	case XDP_SETUP_PROG:
+ 		return i40e_xdp_setup(vsi, xdp->prog, xdp->extack);
+-#ifdef HAVE_XDP_QUERY_PROG
+-	case XDP_QUERY_PROG:
+-#ifndef NO_NETDEV_BPF_PROG_ATTACHED
+-		xdp->prog_attached = i40e_enabled_xdp_vsi(vsi);
+-#endif /* !NO_NETDEV_BPF_PROG_ATTACHED */
+-		xdp->prog_id = vsi->xdp_prog ? vsi->xdp_prog->aux->id : 0;
+-		return 0;
+-#endif /* HAVE_XDP_QUERY_PROG */
+ #ifdef HAVE_AF_XDP_ZC_SUPPORT
+ #ifndef NO_XDP_QUERY_XSK_UMEM
+ 	case XDP_QUERY_XSK_UMEM:
+--
+2.35.6
+
