@@ -1,0 +1,4 @@
+[submodule "SPECS/linux/v6.1"]
+	path = SPECS/linux/v6.1
+	url = https://github.com/akaher/photon-linux.git
+	branch = v6.1
