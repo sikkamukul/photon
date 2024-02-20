@@ -1,15 +1,15 @@
 %define debug_package %{nil}
 Summary:        Linux API header files
 Name:           linux-api-headers
-Version:        6.1.62
+Version:        5.10.206
 Release:        1%{?dist}
 License:        GPLv2
 URL:            http://www.kernel.org/
 Group:          System Environment/Kernel
 Vendor:         VMware, Inc.
 Distribution:   Photon
-Source0:        http://www.kernel.org/pub/linux/kernel/v6.x/linux-%{version}.tar.xz
-%define sha512 linux=3d0ba0200fb2337e4c2a0fd417adff32dffa1d24048a457be527556d6d6321e92c7dd80a75f13e2279e1facd4784a3a4e79e1b1ea45b6dd08824a6ab7c0ea0bc
+Source0:        http://www.kernel.org/pub/linux/kernel/v5.x/linux-%{version}.tar.xz
+%define sha512 linux=48b04c27f183fc90fb7ccebba62d4e99bd3272e7f2618c0bd8ea864b89acfb2b4b4f69361774c960685267b52b70c4f7454dfcc61f64e9781939e2374870ee4e
 BuildArch:      noarch
 %description
 The Linux API Headers expose the kernel's API for use by Glibc.
@@ -23,6 +23,7 @@ make %{?_smp_mflags} mrproper
 [ "%{_arch}" = "aarch64" ] && ARCH=arm64
 [ "%{_arch}" = "i686" ] && ARCH=i386
 cd %{_builddir}/linux-%{version}
+make %{?_smp_mflags} ARCH=$ARCH headers_check
 # 'make headers_install' needs rsync, but we would prefer not to add
 # that dependency to linux-api-headers. So prepare the headers and
 # copy them using 'cp' instead.
@@ -39,43 +40,57 @@ find /%{buildroot}%{_includedir} \( -name .install -o -name ..install.cmd \) -de
 %{_includedir}/*
 
 %changelog
-* Tue Nov 14 2023 Ankit Jain <ankitja@vmware.com> 6.1.62-1
-- Update to version 6.1.62
-* Fri Oct 27 2023 Vamsi Krishna Brahmajosyula <vbrahmajosyula@vmware.com> 6.1.60-1
-- Upgrade to 6.1.60
-* Thu Sep 14 2023 Roye Eshed <eshedr@vmware.com> 6.1.53-1
-- Update to version 6.1.53
-* Mon Aug 14 2023 Ajay Kaher <akaher@vmware.com> 6.1.45-1
-- Update to version 6.1.45
-* Thu Jul 20 2023 Ashwin Dayanand Kamat <kashwindayan@vmware.com> 6.1.39-1
-- Update to version 6.1.39
-* Tue Jul 04 2023 Ashwin Dayanand Kamat <kashwindayan@vmware.com> 6.1.37-1
-- Update to version 6.1.37
-* Tue Jun 06 2023 Brennan Lamoreaux <blamoreaux@vmware.com> 6.1.32-1
-- Update to version 6.1.32
-* Tue May 16 2023 Ankit Jain <ankitja@vmware.com> 6.1.28-1
-- Update to version 6.1.28
-* Tue Feb 28 2023 Bo Gan <ganb@vmware.com> 6.1.10-1
-- Update to 6.1.10
-* Mon Nov 28 2022 Keerthana K <keerthanak@vmware.com> 6.0.7-1
-- Update to 6.0.7
-* Wed Sep 28 2022 Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu> 5.10.142-1
+* Tue Jan 09 2024 Ashwin Dayanand Kamat <kashwindayan@vmware.com> 5.10.206-1
+- Update to version 5.10.206
+* Mon Nov 27 2023 Brennan Lamoreaux <blamoreaux@vmware.com> 5.10.201-1
+- Update to version 5.10.201
+* Thu Nov 09 2023 Ankit Jain <ankitja@vmware.com> 5.10.200-1
+- Update to version 5.10.200
+* Fri Oct 13 2023 Vamsi Krishna Brahmajosyula <vbrahmajosyula@vmware.com> 5.10.198-1
+- Update to version 5.10.198
+* Mon Sep 11 2023 Roye Eshed <eshedr@vmware.com> 5.10.194-1
+- Update to version 5.10.194
+* Wed Aug 16 2023 Ajay Kaher <akaher@vmware.com> 5.10.190-1
+- Update to version 5.10.190
+* Tue Aug 01 2023 Kuntal Nayak <nkuntal@vmware.com> 5.10.188-1
+- Update to version 5.10.188
+* Fri Jul 14 2023 Ashwin Dayanand Kamat <kashwindayan@vmware.com> 5.10.186-1
+- Update to version 5.10.186
+* Thu Jun 08 2023 Brennan Lamoreaux <blamoreaux@vmware.com> 5.10.183-1
+- Update to version 5.10.183
+* Wed May 17 2023 Ankit Jain <ankitja@vmware.com> 5.10.180-1
+- Update to version 5.10.180
+* Fri Mar 17 2023 Roye Eshed <eshedr@vmware.com> 5.10.175-1
+- Update to version 5.10.175
+* Thu Feb 16 2023 Srish Srinivasan <ssrish@vmware.com> 5.10.168-1
+- Update to version 5.10.168
+* Wed Feb 01 2023 Ashwin Dayanand Kamat <kashwindayan@vmware.com> 5.10.165-1
+- Update to version 5.10.165
+* Fri Jan 06 2023 Brennan Lamoreaux <blamoreaux@vmware.com> 5.10.162-1
+- Update to version 5.10.162
+* Mon Dec 19 2022 srinidhira0 <srinidhir@vmware.com> 5.10.159-1
+- Update to version 5.10.159
+* Mon Dec 12 2022 Ankit Jain <ankitja@vmware.com> 5.10.158-1
+- Update to version 5.10.158
+* Mon Oct 31 2022 Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu> 5.10.152-1
+- Update to version 5.10.152
+* Fri Sep 09 2022 srinidhira0 <srinidhir@vmware.com> 5.10.142-1
 - Update to version 5.10.142
-* Tue Sep 27 2022 Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu> 5.10.132-1
+* Tue Aug 16 2022 srinidhira0 <srinidhir@vmware.com> 5.10.132-1
 - Update to version 5.10.132
-* Fri Sep 23 2022 Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu> 5.10.118-1
+* Wed May 25 2022 Sharan Turlapati <sturlapati@vmware.com> 5.10.118-1
 - Update to version 5.10.118
-* Wed Sep 21 2022 Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu> 5.10.109-1
+* Fri Apr 29 2022 Ashwin Dayanand Kamat <kashwindayan@vmware.com> 5.10.109-1
 - Update to version 5.10.109
-* Thu Sep 15 2022 Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu> 5.10.103-1
+* Tue Mar 08 2022 srinidhira0 <srinidhir@vmware.com> 5.10.103-1
 - Update to version 5.10.103
-* Wed Sep 14 2022 Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu> 5.10.93-1
+* Fri Jan 21 2022 Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu> 5.10.93-1
 - Update to version 5.10.93
-* Mon Sep 12 2022 Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu> 5.10.83-1
+* Mon Dec 06 2021 srinidhira0 <srinidhir@vmware.com> 5.10.83-1
 - Update to version 5.10.83
 * Mon Nov 08 2021 Vikash Bansal <bvikas@vmware.com> 5.10.78-1
 - Update to version 5.10.78
-* Thu Oct 28 2021 Sharan Turlapati <sturlapati@vmware.com> 5.10.75-1
+* Tue Oct 26 2021 Sharan Turlapati <sturlapati@vmware.com> 5.10.75-1
 - Update to version 5.10.75
 * Fri Aug 27 2021 Ankit Jain <ankitja@vmware.com> 5.10.61-1
 - Update to version 5.10.61
