@@ -5,18 +5,19 @@
 # check the release bundle & use the right version, example:
 # https://github.com/draios/sysdig/blob/0.30.2/cmake/modules/falcosecurity-libs.cmake#L35
 %define falcosecurity_libs_ver  0.13.4
+%define sysdig_version          0.34.1
 
 Summary:        Sysdig is a universal system visibility tool with native support for containers.
 Name:           sysdig
-Version:        0.34.1
-Release:        1%{?kernelsubrelease}%{?dist}
+Version:        0.34.1%{?kernelsubrelease}
+Release:        1%{?dist}
 License:        GPLv2
 URL:            http://www.sysdig.org
 Group:          Applications/System
 Vendor:         VMware, Inc.
 Distribution:   Photon
 
-Source0: https://github.com/draios/sysdig/archive/%{name}-%{version}.tar.gz
+Source0: https://github.com/draios/sysdig/archive/%{name}-%{sysdig_version}.tar.gz
 %define sha512 %{name}=2d7c6369eb6ae85cb7fca50da049470830eb8a88002414f257e5ccf1eb438fe36890d51107ffd782b2cd3b7358094de0795641a1cb6b086a4e29b9a5b6edad4f
 
 Source1: https://github.com/falcosecurity/libs/archive/falconsecurity-libs-%{falcosecurity_libs_ver}.tar.gz
@@ -69,7 +70,7 @@ Sysdig is scriptable in Lua and includes a command line interface and a powerful
 that runs in your terminal
 
 %prep
-%autosetup -p1 -a0 -a1
+%autosetup -p1 -a0 -a1 -n %{name}-%{sysdig_version}
 
 %build
 export CFLAGS="-Wno-error=misleading-indentation -Wno-dev"
@@ -91,7 +92,7 @@ export CFLAGS="-Wno-error=misleading-indentation -Wno-dev"
     -DBUILD_DRIVER=ON \
     -DBUILD_LIBSCAP_EXAMPLES=OFF \
     -DBUILD_LIBSINSP_EXAMPLES=OFF \
-    -DFALCOSECURITY_LIBS_SOURCE_DIR=%{_builddir}/%{name}-%{version}/libs-%{falcosecurity_libs_ver} \
+    -DFALCOSECURITY_LIBS_SOURCE_DIR=%{_builddir}/%{name}-%{sysdig_version}/libs-%{falcosecurity_libs_ver} \
     -DFALCOSECURITY_LIBS_VERSION=%{falcosecurity_libs_ver} \
     -DCMAKE_INSTALL_BINDIR:PATH=%{_bindir} \
     -DCMAKE_INSTALL_SBINDIR:PATH=%{_sbindir} \

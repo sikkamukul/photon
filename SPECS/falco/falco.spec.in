@@ -4,17 +4,19 @@
 
 %define _modulesdir /lib/modules/%{uname_r}
 
+%define falco_ver   0.36.2
+
 Summary:        The Behavioral Activity Monitor With Container Support
 Name:           falco
-Version:        0.36.2
-Release:        2%{?kernelsubrelease}%{?dist}
+Version:        0.36.2%{?kernelsubrelease}
+Release:        2%{?dist}
 License:        GPLv2
 URL:            https://falco.org
 Group:          Applications/System
 Vendor:         VMware, Inc.
 Distribution:   Photon
 
-Source0: https://github.com/falcosecurity/falco/archive/refs/tags/%{name}-%{version}.tar.gz
+Source0: https://github.com/falcosecurity/falco/archive/refs/tags/%{name}-%{falco_ver}.tar.gz
 %define sha512 %{name}=a3fef235ab4f3121bd0400827712652530ec417498c44ada8b6bf565f7631d035673b53dad94ea6ae9c854d45202ed71b2771f19e0c92eea3fc3503e5b75b02e
 
 Patch0: build-Distinguish-yamlcpp-in-USE_BUNDLED-macro.patch
@@ -71,7 +73,7 @@ Sysdig %{name} is an open source, behavioral activity monitor designed to detect
 Falco lets you continuously monitor and detect container, application, host, and network activity; all in one place, from one source of data, with one set of customizable rules.
 
 %prep
-%autosetup -p1
+%autosetup -p1 -n %{name}-%{falco_ver}
 
 %build
 %{cmake} \
