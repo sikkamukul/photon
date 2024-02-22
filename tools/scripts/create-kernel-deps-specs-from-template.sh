@@ -45,27 +45,90 @@ create_specs() {
     [ -z "$c" ] && c="0"
     local d="${krel_arr[$i]}"
 
-    local ksubrel=$(printf "a%02d%02d%03d%03d" "$a" "$b" "$c" "$d")
+    local ksubrel=$(printf ".%02d%02d%03d%03d" "$a" "$b" "$c" "$d")
 
     for sp in ${specs[@]}; do
       local target_dir="$(dirname $sp)"
-      local target_fn="$(basename -- ${sp} .spec)-${kver}.spec"
-      echo "Now operating on '${kver}-${krel}' & ${target_fn} ..."
-      sed -e "s|$kver_str|${kver}|" \
-        -e "s|$krel_str|${krel}|" \
-        -e "s|$ksubrel_str|${ksubrel}|" \
-        ${sp} > ${target_dir}/${target_fn}
+      local sp_basename="$(basename -s .spec.in ${sp})"
+      if [[ $(echo "${kernel_drivers_intel[@]}" | fgrep -w "$sp_basename") ]]; then
+        local kernel_fn=""
+        local target_fn=""
+        local driver_versions=""
+        local driver_version_macro=""
+        local kernel_flavour_macro="%{KERNEL_FLAVOUR}"
+        local kernel_flavour="${pkg#linux}"
+        case $sp_basename in
+          "kernels-drivers-intel-iavf")
+            if [ "$pkg" == "linux-rt" ]; then
+              driver_versions=("${iavf_versions[@]}")
+            else
+              driver_versions=("${iavf_versions[0]}")
+            fi
+            driver_version_macro="%{IAVF_VERSION}"
+            ;;
+          "kernels-drivers-intel-i40e")
+            if [ "$pkg" == "linux-rt" ]; then
+              driver_versions=("${i40e_versions[@]}")
+            else
+              driver_versions=("${i40e_versions[0]}")
+            fi
+            driver_version_macro="%{I40E_VERSION}"
+            ;;
+          "kernels-drivers-intel-ice")
+            if [ "$pkg" == "linux-rt" ]; then
+              driver_versions=("${ice_versions[@]}")
+            else
+              driver_versions=("${ice_versions[0]}")
+            fi
+            driver_version_macro="%{ICE_VERSION}"
+            ;;
+          *)
+            ;;
+        esac
+        for driver_version in ${driver_versions[@]}; do
+          kernel_fn="$(basename -- ${sp} .spec)-${driver_version}-${kver}.spec"
+          target_fn=${pkg}-${kernel_fn#kernels-}
+          echo "Now operating on '${kver}-${krel}' & ${target_dir}/${target_fn} ..."
+          sed -e "s|$kver_str|${kver}|" \
+            -e "s|$krel_str|${krel}|" \
+            -e "s|$ksubrel_str|${ksubrel}|" \
+            -e "s|$driver_version_macro|${driver_version}|" \
+            -e "s|$kernel_flavour_macro|${kernel_flavour}|" \
+            ${sp} > ${target_dir}/${target_fn}
+        done
+      elif [ "$pkg" == "linux" ]; then
+        local target_fn="$(basename -- ${sp} .spec)-${kver}.spec"
+        echo "Now operating on '${kver}-${krel}' & ${target_dir}/${target_fn} ..."
+        sed -e "s|$kver_str|${kver}|" \
+          -e "s|$krel_str|${krel}|" \
+          -e "s|$ksubrel_str|${ksubrel}|" \
+          ${sp} > ${target_dir}/${target_fn}
+      fi
     done
   done
 }
 
+iavf_versions=(4.9.1 4.8.2 4.5.3)
+i40e_versions=(2.23.17 2.22.18)
+ice_versions=(1.13.7 1.12.7 1.11.14 1.9.11)
+kernel_drivers_intel=(kernels-drivers-intel-iavf kernels-drivers-intel-i40e kernels-drivers-intel-ice)
+
 specs=(falco sysdig ktap)
+specs+=(${kernel_drivers_intel[@]})
+
 for s in ${!specs[@]}; do
-  rm -f $spec_dir/${specs[$s]}/*.spec
-  specs[$s]="$spec_dir/${specs[$s]}/${specs[$s]}.spec.in"
+  if ! test -e "$spec_dir/${specs[$s]}/${specs[$s]}.spec.in"; then
+    rm -f $spec_dir/kernels-drivers-intel/*.spec
+    specs[$s]="$spec_dir/kernels-drivers-intel/${specs[$s]}.spec.in"
+  else
+    rm -f $spec_dir/${specs[$s]}/*.spec
+    specs[$s]="$spec_dir/${specs[$s]}/${specs[$s]}.spec.in"
+  fi
 done
 
 create_specs "%{KERNEL_VERSION}" "%{KERNEL_RELEASE}" "%{?kernelsubrelease}" "linux"
+create_specs "%{KERNEL_VERSION}" "%{KERNEL_RELEASE}" "%{?kernelsubrelease}" "linux-rt"
+create_specs "%{KERNEL_VERSION}" "%{KERNEL_RELEASE}" "%{?kernelsubrelease}" "linux-esx"
 
 #specs=($(find $spec_dir -name "*.spec.in" | xargs -n1 grep -l -m1 %{LINUX_RT_KERNEL_VERSION}))
 #create_specs "%{LINUX_RT_KERNEL_VERSION}" "%{LINUX_RT_KERNEL_RELEASE}" "%{?linuxrt_kernelsubrelease}" "linux-rt"
