@@ -3,8 +3,8 @@
 
 Summary:        Intel ice driver v%{ICE_VERSION}
 Name:           linux%{KERNEL_FLAVOUR}-drivers-intel-ice
-Version:        %{ICE_VERSION}
-Release:        2%{?kernelsubrelease}%{?dist}
+Version:        %{ICE_VERSION}%{?kernelsubrelease}
+Release:        2%{?dist}
 License:        GPLv2
 URL:            https://sourceforge.net/projects/e1000
 Group:          System Environment/Kernel
@@ -42,7 +42,7 @@ Requires:       linux%{KERNEL_FLAVOUR} = %{uname_r}
 Conflicts:      linux%{KERNEL_FLAVOUR} < %{conflicts_ver}
 
 %description
-This Linux package contains the Intel ice v%{version} driver.
+This Linux package contains the Intel ice v%{ICE_VERSION} driver.
 
 %package docs
 Summary:        Kernel docs
@@ -56,18 +56,18 @@ were left unpackaged from linux%{KERNEL_FLAVOUR} in the %{_mandir}.
 
 %if "%{ICE_VERSION}" == "1.13.7"
 # Using autosetup is not feasible
-%setup -q -n ice-%{version}
+%setup -q -n ice-%{ICE_VERSION}
 %elif "%{ICE_VERSION}" == "1.12.7"
 # Using autosetup is not feasible
-%setup -q -T -D -b 1 -n ice-%{version}
+%setup -q -T -D -b 1 -n ice-%{ICE_VERSION}
 %autopatch -p1 -m0 -M0
 %elif "%{ICE_VERSION}" == "1.11.14"
 # Using autosetup is not feasible
-%setup -q -T -D -b 2 -n ice-%{version}
+%setup -q -T -D -b 2 -n ice-%{ICE_VERSION}
 %autopatch -p1 -m1 -M1
 %elif "%{ICE_VERSION}" == "1.9.11"
 # Using autosetup is not feasible
-%setup -q -T -D -b 3 -n ice-%{version}
+%setup -q -T -D -b 3 -n ice-%{ICE_VERSION}
 %autopatch -p1 -m2 -M4
 %endif
 
@@ -78,7 +78,7 @@ make -C src KSRC=%{_modulesdir}/build %{?_smp_mflags}
 %install
 
 make -C src KSRC=%{_modulesdir}/build INSTALL_MOD_PATH=%{buildroot} \
-    INSTALL_MOD_DIR=extra/ice-%{version} MANDIR=%{_mandir} \
+    INSTALL_MOD_DIR=extra/ice-%{ICE_VERSION} MANDIR=%{_mandir} \
     modules_install mandocs_install %{?_smp_mflags}
 
 find %{buildroot}%{_modulesdir} -name *.ko -type f -print0 | xargs -0 xz
@@ -88,8 +88,8 @@ find %{buildroot}%{_modulesdir} -name *.ko -type f -print0 | xargs -0 xz
 
 %files
 %defattr(-,root,root)
-%dir %{_modulesdir}/extra/ice-%{version}
-%{_modulesdir}/extra/ice-%{version}/ice.ko.xz
+%dir %{_modulesdir}/extra/ice-%{ICE_VERSION}
+%{_modulesdir}/extra/ice-%{ICE_VERSION}/ice.ko.xz
 # ICE driver firmware files are packaged in linux-firmware
 %exclude /lib/firmware/updates/intel/ice
 
@@ -98,7 +98,7 @@ find %{buildroot}%{_modulesdir} -name *.ko -type f -print0 | xargs -0 xz
 %{_mandir}/*
 
 %changelog
-* Wed Jan 31 2024 Ankit Jain <ankit-ja.jain@broadcom.com> %{ICE_VERSION}-2
+* Wed Jan 31 2024 Ankit Jain <ankit-ja.jain@broadcom.com> %{ICE_VERSION}%{?kernelsubrelease}-2
 - Adding generic template for ice driver
-* Wed Jan 31 2024 Brennan Lamoreaux <brennan.lamroeaux@broadcom.com> %{ICE_VERSION}-1
+* Wed Jan 31 2024 Brennan Lamoreaux <brennan.lamroeaux@broadcom.com> %{ICE_VERSION}%{?kernelsubrelease}-1
 - Add new ice v%{ICE_VERSION} driver

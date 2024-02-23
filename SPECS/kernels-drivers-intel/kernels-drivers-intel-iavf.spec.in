@@ -3,8 +3,8 @@
 
 Summary:        Intel iavf driver v%{IAVF_VERSION}
 Name:           linux%{KERNEL_FLAVOUR}-drivers-intel-iavf
-Version:        %{IAVF_VERSION}
-Release:        2%{?kernelsubrelease}%{?dist}
+Version:        %{IAVF_VERSION}%{?kernelsubrelease}
+Release:        2%{?dist}
 License:        GPLv2
 URL:            https://sourceforge.net/projects/e1000
 Group:          System Environment/Kernel
@@ -52,15 +52,15 @@ were left unpackaged from linux%{KERNEL_FLAVOUR} in the %{_mandir}.
 %prep
 %if "%{IAVF_VERSION}" == "4.9.1"
 # Using autosetup is not feasible
-%setup -q -n iavf-%{version}
+%setup -q -n iavf-%{IAVF_VERSION}
 %autopatch -p1 -m0 -M0
 %elif "%{IAVF_VERSION}" == "4.8.2"
 # Using autosetup is not feasible
-%setup -q -T -D -b 1 -n iavf-%{version}
+%setup -q -T -D -b 1 -n iavf-%{IAVF_VERSION}
 %autopatch -p1 -m1 -M2
 %elif "%{IAVF_VERSION}" == "4.5.3"
 # Using autosetup is not feasible
-%setup -q -T -D -b 2 -n iavf-%{version}
+%setup -q -T -D -b 2 -n iavf-%{IAVF_VERSION}
 %autopatch -p1 -m3 -M6
 %endif
 
@@ -71,7 +71,7 @@ make -C src KSRC=%{_modulesdir}/build %{?_smp_mflags}
 %install
 
 make -C src KSRC=%{_modulesdir}/build INSTALL_MOD_PATH=%{buildroot} \
-    INSTALL_MOD_DIR=extra/iavf-%{version} MANDIR=%{_mandir} \
+    INSTALL_MOD_DIR=extra/iavf-%{IAVF_VERSION} MANDIR=%{_mandir} \
     modules_install mandocs_install %{?_smp_mflags}
 
 find %{buildroot}%{_modulesdir} -name *.ko -type f -print0 | xargs -0 xz
@@ -81,8 +81,8 @@ find %{buildroot}%{_modulesdir} -name *.ko -type f -print0 | xargs -0 xz
 
 %files
 %defattr(-,root,root)
-%dir %{_modulesdir}/extra/iavf-%{version}
-%{_modulesdir}/extra/iavf-%{version}/iavf.ko.xz
+%dir %{_modulesdir}/extra/iavf-%{IAVF_VERSION}
+%{_modulesdir}/extra/iavf-%{IAVF_VERSION}/iavf.ko.xz
 # iavf.conf is used to just blacklist the deprecated i40evf driver and
 # create an alias of i40evf to iavf. By default, iavf is used as the
 # VF driver. This file creates a package conflict with other kernel
@@ -94,7 +94,7 @@ find %{buildroot}%{_modulesdir} -name *.ko -type f -print0 | xargs -0 xz
 %{_mandir}/*
 
 %changelog
-* Thu Feb 22 2024 Ankit Jain <ankit-ja.jain@broadcom.com> %{IAVF_VERSION}-2
+* Thu Feb 22 2024 Ankit Jain <ankit-ja.jain@broadcom.com> %{IAVF_VERSION}%{?kernelsubrelease}-2
 - Adding generic template for iavf driver
-* Thu Jan 04 2024 Roye Eshed <roye.eshed@broadcom.com> %{IAVF_VERSION}-1
+* Thu Jan 04 2024 Roye Eshed <roye.eshed@broadcom.com> %{IAVF_VERSION}%{?kernelsubrelease}-1
 - Package Intel driver iavf v%{IAVF_VERSION} for linux%{KERNEL_FLAVOUR}.
