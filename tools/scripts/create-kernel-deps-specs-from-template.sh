@@ -45,7 +45,7 @@ create_specs() {
     [ -z "$c" ] && c="0"
     local d="${krel_arr[$i]}"
 
-    local ksubrel=$(printf ".%02d%02d%03d%03d" "$a" "$b" "$c" "$d")
+    local ksubrel=$(printf "a%02d%02d%03d%03d" "$a" "$b" "$c" "$d")
 
     for sp in ${specs[@]}; do
       local target_dir="$(dirname $sp)"
@@ -57,6 +57,11 @@ create_specs() {
         local driver_version_macro=""
         local kernel_flavour_macro="%{KERNEL_FLAVOUR}"
         local kernel_flavour="${pkg#linux}"
+        local conflict_kversion="6.1.62"
+
+        if [[ $(echo -e "$kver\n$conflict_kversion" | sort -V | head -n1) != "$conflict_kversion" ]]; then
+          continue
+        fi
         case $sp_basename in
           "kernels-drivers-intel-iavf")
             if [ "$pkg" == "linux-rt" ]; then

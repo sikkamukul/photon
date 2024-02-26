@@ -436,18 +436,6 @@ class SPECS(object):
         self.initialize()
 
     def initialize(self):
-        kver_to_rpm_macros_dict = {
-            "linux": ["KERNEL_VERSION", "KERNEL_RELEASE", "kernelsubrelease"],
-            "linux-rt": ["LINUX_RT_KERNEL_VERSION", "LINUX_RT_KERNEL_RELEASE", "linuxrt_kernelsubrelease"],
-        }
-
-        kernel_spec_dir=f"{constants.specPath}/linux"
-
-        for spec, macros in kver_to_rpm_macros_dict.items():
-            spec_fpath = f"{kernel_spec_dir}/{spec}.spec"
-            rpm_macros_ver = self.addKernelRPMacro(spec_fpath)
-            for key, val in zip(macros, rpm_macros_ver):
-                constants.addMacro(key, val)
 
         # Full parsing
         self.specData[constants.buildArch] = SpecData(
